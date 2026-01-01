@@ -11,6 +11,7 @@ def on_publish(client, userdata, result):  # 当消息被发送出去后，会�
 client = mqtt.Client("Python-MQTT-Publisher")
 
 # 设置回调函数
+client.on_publish = on_publish
 
 # 连接到MQTT服务器
 client.connect(broker_address, port=1883)  # 默认端口是1883，除非你更改了服务器的端口配置
