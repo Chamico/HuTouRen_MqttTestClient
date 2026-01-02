@@ -1,27 +1,45 @@
 import paho.mqtt.client as mqtt
+import json
+import time
 
-# MQTT服务器地址
-broker_address = "broker.hivemq.com"
-# 设置回调函数
+with open('config.json', 'r') as f:
+    config = json.load(f)
+
+broker_address = config['broker']['host']
+broker_port = config['broker']['port']
+broker_user = config['broker']['user']
+broker_password = config['broker']['password']
+broker_topic = config['broker']['topic']
+
+client = mqtt.Client(client_id="publisher")
 
 def on_publish(client, userdata, result):  # 当消息被发送出去后，会调用这个函数
     print("消息发布成功")
 
-# 创建MQTT客户端实例
-client = mqtt.Client("Python-MQTT-Publisher")
+def init_publisher_client():
+    client.on_publish = on_publish
+    client.username_pw_set(broker_user,broker_password)
+    ret = client.connect(broker_address)
 
-# 设置回调函数
-client.on_publish = on_publish
+    if 0 == ret:
+        print("publisher connect success")
+        return True
+    else:
+        print("publisher connect failed " + ret)
+        return False
 
-# 连接到MQTT服务器
-client.connect(broker_address, port=1883)  # 默认端口是1883，除非你更改了服务器的端口配置
+def send_message():
+    for index in range(0,9):
+        message = "Hello MQTT!" + str(index)
+        client.publish(broker_topic, message)
+        time.sleep(2)
 
-# 定义要发布的主题和消息内容
-topic = "test/topic"
-message = "Hello MQTT!"
+def end_publisher_client():
+    client.disconnect()
+    print("publisher finish, disconnect")
 
-# 发布消息到MQTT服务器
-client.publish(topic, message)
-
-# 断开连接
-client.disconnect()
+if init_publisher_client():
+    send_message()
+    end_publisher_client()
+else:
+    print("publisher fail")

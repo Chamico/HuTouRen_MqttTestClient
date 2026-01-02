@@ -1,0 +1,9 @@
+{
+    "broker": {
+        "host": "xx.xx.xx.xx",		# host ip, example: 12.34.56.78
+        "port": 1833,				# 默认 1833
+        "user": "user_name",		# mosquitto_passwd 创建的用户名称
+        "password": "password",		# mosquitto_passwd 创建的用户对应的密码
+        "topic": "test_topic"		# 随便填
+    }
+}
